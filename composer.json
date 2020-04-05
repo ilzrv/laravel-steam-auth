@@ -16,5 +16,12 @@
         "psr-4": {
             "Ilzrv\\LaravelSteamAuth\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ilzrv\\LaravelSteamAuth\\ServiceProvider"
+            ]
+        }
     }
 }
