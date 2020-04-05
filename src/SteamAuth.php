@@ -58,7 +58,6 @@ class SteamAuth
      * Check Steam auth
      *
      * @return bool
-     * @throws \Exception
      */
     public function validate()
     {
