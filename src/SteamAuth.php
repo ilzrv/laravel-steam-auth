@@ -180,13 +180,15 @@ class SteamAuth
      */
     protected function buildAuthUrl()
     {
-        $redirectUrl = config('steam-auth.redirect_url');
+        $redirectUrl = config('steam-auth.redirect_url')
+            ? url(config('steam-auth.redirect_url'))
+            : $this->request->url();
 
         $params = [
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
-            'openid.return_to' => $redirectUrl ? url($redirectUrl) : $this->request->url(),
-            'openid.realm' => url('/'),
+            'openid.return_to' => $redirectUrl,
+            'openid.realm' => parse_url($redirectUrl, PHP_URL_SCHEME) .'://' . parse_url($redirectUrl, PHP_URL_HOST),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         ];
