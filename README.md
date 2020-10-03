@@ -7,7 +7,6 @@ Package allows you to implement Steam authentication in your Laravel project.
 
 ## Requirements
  * Laravel 7+
- * Guzzle HTTP 6.5+
 
 ## Installation
 #### Install the package
