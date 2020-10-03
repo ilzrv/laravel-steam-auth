@@ -74,7 +74,7 @@ server {
 In `routes/web.php`:
 
 ```php
-Route::get('login', 'Auth\SteamAuthController@login');
+Route::get('login', [\App\Http\Controllers\Auth\SteamAuthController::class, 'login']);
 ```
 
 Create a controller `SteamAuthController.php`:
