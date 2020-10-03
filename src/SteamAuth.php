@@ -2,8 +2,8 @@
 
 namespace Ilzrv\LaravelSteamAuth;
 
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class SteamAuth
 {
@@ -28,9 +28,9 @@ class SteamAuth
     protected $request;
 
     /**
-     * @var SteamRequest
+     * @var PendingRequest
      */
-    protected $steamRequest;
+    protected $pendingRequest;
 
     /**
      * @var string
@@ -47,10 +47,10 @@ class SteamAuth
      */
     protected $steamData;
 
-    public function __construct(Request $request, SteamRequest $steamRequest)
+    public function __construct(Request $request, PendingRequest $pendingRequest = null)
     {
         $this->request = $request;
-        $this->steamRequest = $steamRequest;
+        $this->pendingRequest = $pendingRequest ?: app(PendingRequest::class);
         $this->authUrl = $this->buildAuthUrl();
     }
 
@@ -65,7 +65,7 @@ class SteamAuth
             return false;
         }
 
-        $response = Http::get(self::OPENID_URL, $this->getRequestPrams());
+        $response = $this->pendingRequest->get(self::OPENID_URL, $this->getRequestPrams());
 
         return $this->parseSteamId()
             && $this->parseSteamData()
@@ -116,7 +116,7 @@ class SteamAuth
         );
 
         if (is_numeric($matches[1])) {
-            $this->setSteamId($matches[1]);
+            $this->steamId = $matches[1];
             return true;
         }
 
@@ -131,10 +131,10 @@ class SteamAuth
     protected function parseSteamData()
     {
         try {
-            $userData = $this->steamRequest->get(self::STEAM_DATA_URL)['response']['players'][0];
+            $userData = $this->pendingRequest->get($this->getSteamDataUrl())['response']['players'][0];
 
             if (config('steam-auth.getting_level')) {
-                $userLevel = $this->steamRequest->get(self::STEAM_LEVEL_URL);
+                $userLevel = $this->pendingRequest->get($this->getSteamLevelUrl());
             }
 
             $this->steamData = new SteamData(
@@ -146,6 +146,46 @@ class SteamAuth
         }
 
         return true;
+    }
+
+    /**
+     * Get Steam data url with api key
+     *
+     * @return string
+     */
+    protected function getSteamDataUrl()
+    {
+        return sprintf(
+            self::STEAM_DATA_URL,
+            $this->getApiKey(),
+            $this->steamId
+        );
+    }
+
+    /**
+     * Get Steam level url with api key
+     *
+     * @return string
+     */
+    protected function getSteamLevelUrl()
+    {
+        return sprintf(
+            self::STEAM_LEVEL_URL,
+            $this->getApiKey(),
+            $this->steamId
+        );
+    }
+
+    /**
+     * Get random api key from list
+     *
+     * @return string
+     */
+    protected function getApiKey()
+    {
+        $apiKeys = config('steam-auth.api_keys');
+
+        return $apiKeys[array_rand($apiKeys)];
     }
 
     /**
@@ -207,17 +247,5 @@ class SteamAuth
         return $this->request->has('openid_assoc_handle')
             && $this->request->has('openid_signed')
             && $this->request->has('openid_sig');
-    }
-
-    /**
-     * Steam ID setter
-     *
-     * @param string $steamId
-     * @return void
-     */
-    protected function setSteamId($steamId)
-    {
-        $this->steamId = $steamId;
-        $this->steamRequest->setSteamId($steamId);
     }
 }
