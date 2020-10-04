@@ -9,7 +9,7 @@ return [
     |
     | By default redirect_url is equal to your login url.
     |
-    | Can be relative url or null.
+    | Can be a relative url, an absolute url, or "null".
     |
     */
     'redirect_url' => null,
@@ -36,16 +36,5 @@ return [
     |
     */
     'api_keys' => explode(',', env('STEAM_AUTH_API_KEYS')),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Number of tries
-    |--------------------------------------------------------------------------
-    |
-    | Number of times to attempt for getting
-    | data from Steam API.
-    |
-    */
-    'tries' => 1,
 
 ];
