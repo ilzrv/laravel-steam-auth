@@ -37,7 +37,7 @@ You can use any of the Laravel PendingRequest settings. Proxies and retries for 
 ```php
 public function __construct(Request $request)
 {
-    $pendingRequest = Http::withOptions([
+    $pendingRequest = \Illuminate\Support\Facades\Http::withOptions([
         'proxy' => 'http://username:password@ip',
         'connect_timeout' => 10,
     ])->retry(3);
