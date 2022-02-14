@@ -2,7 +2,7 @@
     "name": "ilzrv/laravel-steam-auth",
     "description": "Steam Auth for Laravel",
     "require": {
-        "php": "^7.2.5",
+        "php": "^7.2|^8.0",
         "illuminate/http": "^7.0|^8.0"
     },
     "license": "MIT",
