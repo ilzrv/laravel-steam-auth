@@ -115,7 +115,7 @@ class SteamAuth
             $matches
         );
 
-        if (is_numeric($matches[1])) {
+        if (isset($matches[1]) && is_numeric($matches[1])) {
             $this->steamId = $matches[1];
             return true;
         }
