@@ -65,6 +65,10 @@ class SteamAuth
             return false;
         }
 
+        if ($this->buildRedirectUrl() !== $this->request->get('openid_return_to')) {
+            return false;
+        }
+
         $response = $this->pendingRequest->get(self::OPENID_URL, $this->getRequestPrams());
 
         return $this->parseSteamId()
@@ -220,9 +224,7 @@ class SteamAuth
      */
     protected function buildAuthUrl()
     {
-        $redirectUrl = config('steam-auth.redirect_url')
-            ? url(config('steam-auth.redirect_url'))
-            : $this->request->url();
+        $redirectUrl = $this->buildRedirectUrl();
 
         $params = [
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
@@ -247,5 +249,15 @@ class SteamAuth
         return $this->request->has('openid_assoc_handle')
             && $this->request->has('openid_signed')
             && $this->request->has('openid_sig');
+    }
+
+    /**
+     * @return string
+     */
+    private function buildRedirectUrl()
+    {
+        return config('steam-auth.redirect_url')
+            ? url(config('steam-auth.redirect_url'))
+            : $this->request->url();
     }
 }
