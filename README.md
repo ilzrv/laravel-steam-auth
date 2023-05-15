@@ -6,7 +6,7 @@
 Package allows you to implement Steam authentication in your Laravel project.
 
 ## Requirements
- * Laravel 7+
+ * Laravel 9+
 
 ## Installation
 #### Install the package
