@@ -4,23 +4,18 @@ declare(strict_types=1);
 
 namespace Ilzrv\LaravelSteamAuth\Tests;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\HttpFactory;
-use GuzzleHttp\Psr7\Uri;
-use Ilzrv\LaravelSteamAuth\Exceptions\AuthenticationException;
+use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\AuthenticationException;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidQueryValidationException;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidReturnToValidationException;
 use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
+use JsonException;
 use PHPUnit\Framework\MockObject\Exception;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
-final class SteamAuthenticatorTest extends TestCase
+final class AuthValidationTest extends TestCase
 {
     /**
      * @dataProvider provideRequiredParams
@@ -52,42 +47,12 @@ final class SteamAuthenticatorTest extends TestCase
     public static function provideRequiredParams(): array
     {
         return [
-            [
-                'openid_assoc_handle',
-                self::buildHttpQuery('openid_assoc_handle'),
-            ],
-            [
-                'openid_signed',
-                self::buildHttpQuery('openid_signed'),
-            ],
-            [
-                'openid_sig',
-                self::buildHttpQuery('openid_sig'),
-            ],
-            [
-                'openid_return_to',
-                self::buildHttpQuery('openid_return_to'),
-            ],
-            [
-                'openid_claimed_id',
-                self::buildHttpQuery('openid_claimed_id'),
-            ],
+            ['openid_assoc_handle', self::buildHttpQuery('openid_assoc_handle')],
+            ['openid_signed', self::buildHttpQuery('openid_signed')],
+            ['openid_sig', self::buildHttpQuery('openid_sig')],
+            ['openid_return_to', self::buildHttpQuery('openid_return_to')],
+            ['openid_claimed_id', self::buildHttpQuery('openid_claimed_id')],
         ];
-    }
-
-    private static function buildHttpQuery0(?string $without = null): string
-    {
-        $params = [
-            'openid_assoc_handle' => 'data',
-            'openid_signed' => 'data',
-            'openid_sig' => 'data',
-            'openid_return_to' => 'data',
-            'openid_claimed_id' => 'data',
-        ];
-
-        unset($params[$without]);
-
-        return http_build_query($params);
     }
 
     /**
@@ -95,7 +60,7 @@ final class SteamAuthenticatorTest extends TestCase
      * @throws ClientExceptionInterface
      * @throws InvalidQueryValidationException
      * @throws AuthenticationException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testValidateReturnToUrl(): void
     {

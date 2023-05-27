@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Ilzrv\LaravelSteamAuth;
 
-use Ilzrv\LaravelSteamAuth\Exceptions\AuthenticationException;
+use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\AuthenticationException;
+use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\SteamIdNotFoundAuthenticationException;
+use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\SteamResponseNotValidAuthenticationException;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidQueryValidationException;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidReturnToValidationException;
+use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -32,7 +35,7 @@ final class SteamAuthenticator
      * @throws InvalidQueryValidationException
      * @throws InvalidReturnToValidationException
      * @throws AuthenticationException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function auth(): void
     {
@@ -46,7 +49,7 @@ final class SteamAuthenticator
         $contents = $response->getBody()->getContents();
 
         if (preg_match("#is_valid\s*:\s*true#i", $contents) !== 1) {
-            throw new AuthenticationException();
+            throw new SteamResponseNotValidAuthenticationException();
         }
 
         $query = $this->parseUriQueryString();
@@ -58,13 +61,17 @@ final class SteamAuthenticator
         );
 
         if (!isset($matches[1]) || !is_numeric($matches[1])) {
-            throw new \Exception();
+            throw new SteamIdNotFoundAuthenticationException();
         }
 
         $this->loadSteamUser($matches[1]);
     }
 
-    private function loadSteamUser(string $steamId)
+    /**
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     */
+    private function loadSteamUser(string $steamId): void
     {
         $steamDataResponse = $this->httpClient->sendRequest(
             $this->requestFactory->createRequest('GET', sprintf(self::STEAM_DATA_URL, $this->getApiKey(), $steamId)),
@@ -94,7 +101,7 @@ final class SteamAuthenticator
         $this->steamUserDto = SteamUserDto::create($steamData);
     }
 
-    private function getApiKey()
+    private function getApiKey(): string
     {
         $apiKeys = config('steam-auth.api_keys');
 

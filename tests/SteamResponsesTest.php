@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ilzrv\LaravelSteamAuth\Tests;
 
-use Ilzrv\LaravelSteamAuth\Exceptions\AuthenticationException;
+use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\SteamResponseNotValidAuthenticationException;
 use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -36,7 +36,7 @@ final class SteamResponsesTest extends TestCase
             $this->createMock(RequestFactoryInterface::class),
         );
 
-        $this->expectException(AuthenticationException::class);
+        $this->expectException(SteamResponseNotValidAuthenticationException::class);
         $steamAuth->auth();
     }
 
