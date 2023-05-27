@@ -113,30 +113,4 @@ final class SteamAuthenticatorTest extends TestCase
 
         $steamAuth->auth();
     }
-
-
-
-
-//    public function testAuth()//: void
-//    {
-//        $uri = 'https://skgr-general.test/login?openid.assoc_handle=1234567890&openid.claimed_id=https%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F76561198019153518&openid.identity=https%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F76561198019153518&openid.mode=id_res&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.op_endpoint=https%3A%2F%2Fsteamcommunity.com%2Fopenid%2Flogin&openid.response_nonce=2023-05-21T18%3A07%3A30Z8X7lqO7qjMaYy0x2dh8E6%2Fnb3Wk%3D&openid.return_to=https%3A%2F%2Fskgr-general.test%2Flogin&openid.sig=c3%2BQpiCj%2BU1v9Bnjhp60s7ywFI4%3D&openid.signed=signed%2Cop_endpoint%2Cclaimed_id%2Cidentity%2Creturn_to%2Cresponse_nonce%2Cassoc_handle';
-//
-////        $req = new Request(new Uri($uri));
-////        $req->getSome();
-////        exit();
-//
-//        $steamAuth = new SteamAuthenticator(
-//            new Uri($uri),
-//            new Client(),
-//            new HttpFactory()
-//        );
-//
-//        try {
-//            $steamAuth->auth();
-//        } catch (\Exception) {
-//            return $steamAuth->buildAuthUrl();
-//        }
-//
-//        $steamAuth->getSteamUser();
-//    }
 }
