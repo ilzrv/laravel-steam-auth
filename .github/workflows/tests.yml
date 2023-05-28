@@ -28,3 +28,6 @@ jobs:
 
       - name: Execute Tests
         run: XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
