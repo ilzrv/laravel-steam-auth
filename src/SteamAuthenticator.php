@@ -15,13 +15,15 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
+use function is_string;
+
 final class SteamAuthenticator
 {
     private const OPENID_URL = 'https://steamcommunity.com/openid/login';
     private const STEAM_DATA_URL = 'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s';
     private const STEAM_LEVEL_URL = 'https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=%s&format=json&steamid=%s';
 
-    private ?SteamUserDto $steamUserDto;
+    private ?SteamUserDto $steamUserDto = null;
 
     public function __construct(
         private readonly UriInterface $uri,
@@ -193,8 +195,12 @@ final class SteamAuthenticator
 
     private function buildRedirectUrl(): string
     {
-        return config('steam-auth.redirect_url')
-            ? url(config('steam-auth.redirect_url'))
-            : $this->uri->getScheme() . '://' . $this->uri->getAuthority() . $this->uri->getPath();
+        $redirectUrl = config('steam-auth.redirect_url');
+
+        if (is_string($redirectUrl) && is_string($buildRedirectUrl = url($redirectUrl))) {
+            return $buildRedirectUrl;
+        }
+
+        return $this->uri->getScheme() . '://' . $this->uri->getAuthority() . $this->uri->getPath();
     }
 }

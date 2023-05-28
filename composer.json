@@ -11,7 +11,8 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^10.0",
-        "orchestra/testbench": "7.x|^8.5"
+        "orchestra/testbench": "7.x|^8.5",
+        "vimeo/psalm": "^5.12"
     },
     "license": "MIT",
     "authors": [
