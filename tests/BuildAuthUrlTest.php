@@ -7,7 +7,6 @@ namespace Ilzrv\LaravelSteamAuth\Tests;
 use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\UriInterface;
 
 final class BuildAuthUrlTest extends TestCase
 {
