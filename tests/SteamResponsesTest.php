@@ -29,7 +29,7 @@ final class SteamResponsesTest extends TestCase
         $client->method('sendRequest')->willReturn($response);
 
         $steamAuthenticator = new SteamAuthenticator(
-            $this->createUriMock(),
+            $this->createUriMock('example.test'),
             $client,
             $this->createMock(RequestFactoryInterface::class),
         );
@@ -52,7 +52,7 @@ final class SteamResponsesTest extends TestCase
         $client->method('sendRequest')->willReturn($response);
 
         $steamAuthenticator = new SteamAuthenticator(
-            $this->createUriMock(),
+            $this->createUriMock('example.test'),
             $client,
             $this->createMock(RequestFactoryInterface::class),
         );
@@ -140,20 +140,6 @@ final class SteamResponsesTest extends TestCase
         $response->method('getBody')->willReturn($body);
 
         return $response;
-    }
-
-    private function createUriMock(): UriInterface
-    {
-        $uri = $this->createMock(UriInterface::class);
-
-        $uri->method('getScheme')->willReturn('https');
-        $uri->method('getAuthority')->willReturn('example.test');
-        $uri->method('getPath')->willReturn('/login');
-        $uri->method('getQuery')->willReturn(
-            self::buildHttpQuery(null, ['openid_return_to' => 'https://example.test/login'])
-        );
-
-        return $uri;
     }
 
     private function createUriMockWithOpenidClaimedId(string $steamId): UriInterface
