@@ -24,7 +24,7 @@ return [
     | This makes an additional request in the Steam API.
     |
     */
-    'getting_level' => true,
+    'getting_level' => false,
 
     /*
     |--------------------------------------------------------------------------

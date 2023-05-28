@@ -4,8 +4,24 @@ declare(strict_types=1);
 
 namespace Ilzrv\LaravelSteamAuth\Tests;
 
+use Ilzrv\LaravelSteamAuth\ServiceProvider;
+
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
+    /**
+     * Get package providers.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     *
+     * @return array<int, class-string<\Illuminate\Support\ServiceProvider>>
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            ServiceProvider::class,
+        ];
+    }
+
     protected static function buildHttpQuery(
         string $without = null,
         array $replace = [],
