@@ -27,4 +27,4 @@ jobs:
           composer install --prefer-dist --no-interaction
 
       - name: Execute Tests
-        run: ./vendor/bin/phpunit
+        run: XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text
