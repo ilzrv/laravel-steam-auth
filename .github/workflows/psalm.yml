@@ -1,6 +1,10 @@
 name: Psalm Static Analysis
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'psalm.xml'
 
 jobs:
   psalm:
