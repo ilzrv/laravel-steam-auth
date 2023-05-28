@@ -109,10 +109,10 @@ use App\Models\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Uri;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Auth;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\ValidationException;
 use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
 use Ilzrv\LaravelSteamAuth\SteamUserDto;
@@ -124,6 +124,7 @@ final class SteamAuthController
         Redirector $redirector,
         Client $client,
         HttpFactory $httpFactory,
+        AuthManager $authManager,
     ): RedirectResponse {
         $steamAuthenticator = new SteamAuthenticator(
             new Uri($request->getUri()),
@@ -141,7 +142,7 @@ final class SteamAuthController
 
         $steamUser = $steamAuthenticator->getSteamUser();
 
-        Auth::login(
+        $authManager->login(
             $this->firstOrCreate($steamUser),
             true
         );
