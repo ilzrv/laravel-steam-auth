@@ -21,6 +21,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          php -v
           composer install --prefer-dist --no-interaction
 
       - name: Run Psalm
