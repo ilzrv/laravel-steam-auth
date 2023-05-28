@@ -22,6 +22,6 @@
     </source>
 
     <php>
-        <env name="STEAM_AUTH_API_KEYS" value="api_key_1"/>
+        <env name="STEAM_AUTH_API_KEYS" value="api_key_1,api_key_2"/>
     </php>
 </phpunit>
