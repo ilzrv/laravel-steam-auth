@@ -26,7 +26,7 @@ final class SteamAuthenticator
     private ?SteamUserDto $steamUserDto = null;
 
     public function __construct(
-        private readonly UriInterface $uri,
+        private readonly UriInterface $requestUri,
         private readonly ClientInterface $httpClient,
         private readonly RequestFactoryInterface $requestFactory,
     ) {
@@ -172,7 +172,7 @@ final class SteamAuthenticator
 
     private function parseUriQueryString(): array
     {
-        parse_str($this->uri->getQuery(), $result);
+        parse_str($this->requestUri->getQuery(), $result);
 
         return $result;
     }
@@ -201,6 +201,9 @@ final class SteamAuthenticator
             return $buildRedirectUrl;
         }
 
-        return $this->uri->getScheme() . '://' . $this->uri->getAuthority() . $this->uri->getPath();
+        return $this->requestUri->getScheme()
+            . '://'
+            . $this->requestUri->getAuthority()
+            . $this->requestUri->getPath();
     }
 }
