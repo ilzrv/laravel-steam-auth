@@ -1,26 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ilzrv\LaravelSteamAuth;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
-     * Register services.
-     *
-     * @return void
+     * Register any application services.
      */
-    public function register()
+    public function register(): void
     {
-        //
+        $this->mergeConfigFrom(__DIR__ . '/../config/steam-auth.php', 'steam-auth');
     }
 
     /**
-     * Bootstrap services.
-     *
-     * @return void
+     * Bootstrap any application services.
      */
-    public function boot()
+    public function boot(): void
     {
-        $this->publishes([__DIR__ . '/../config/steam-auth.php' => config_path('steam-auth.php')]);
+        $this->publishes([
+            __DIR__ . '/../config/steam-auth.php' => $this->app->configPath('steam-auth.php'),
+        ]);
     }
 }

@@ -1,12 +1,14 @@
 # Steam Auth for Laravel
 [![Latest Stable Version](https://img.shields.io/packagist/v/ilzrv/laravel-steam-auth.svg)](https://packagist.org/packages/ilzrv/laravel-steam-auth)
+[![Codecov](https://img.shields.io/codecov/c/github/ilzrv/laravel-steam-auth?token=MIEA87EZGP)](https://app.codecov.io/github/ilzrv/laravel-steam-auth)
 [![Total Downloads](https://img.shields.io/packagist/dt/ilzrv/laravel-steam-auth.svg)](https://packagist.org/packages/ilzrv/laravel-steam-auth)
 [![License](https://img.shields.io/github/license/ilzrv/laravel-steam-auth.svg)](https://packagist.org/packages/ilzrv/laravel-steam-auth)
 
 Package allows you to implement Steam authentication in your Laravel project.
 
 ## Requirements
- * Laravel 7+
+ * Laravel 9+
+ * PHP 8.1+
 
 ## Installation
 #### Install the package
@@ -31,18 +33,34 @@ STEAM_AUTH_API_KEYS=YourSteamApiKey1,YourSteamApiKey2
 
 ## Tips
 
-#### PendingRequest Settings
-You can use any of the Laravel PendingRequest settings. Proxies and retries for example
+#### Client Settings
+You can use any settings that your client supports, for example, a [Guzzle Proxy](https://docs.guzzlephp.org/en/latest/request-options.html#proxy):
 
 ```php
-public function __construct(Request $request)
-{
-    $pendingRequest = \Illuminate\Support\Facades\Http::withOptions([
-        'proxy' => 'http://username:password@ip',
-        'connect_timeout' => 10,
-    ])->retry(3);
+<?php
 
-    $this->steamAuth = new SteamAuth($request, $pendingRequest);
+declare(strict_types=1);
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
+use Illuminate\Http\Request;
+use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
+
+public function __invoke(
+    Request $request,
+    HttpFactory $httpFactory,
+): RedirectResponse {
+    $client = new Client([
+        'proxy' => 'socks5://user:password@192.168.1.1:1080',
+    ]);
+
+    $steamAuthenticator = new SteamAuthenticator(
+        new Uri($request->getUri()),
+        $client,
+        $httpFactory,
+    );
+    
+    // Continuation of your code...
 }
 ```
 
@@ -51,6 +69,8 @@ If you want to make a proxy domain. Update `redirect_url` inside `steam-auth.php
 
 ```php
 <?php
+
+declare(strict_types=1);
 
 return [
     'redirect_url' => env('APP_ENV', 'production') == 'production'
@@ -68,12 +88,12 @@ server {
 }
 ```
 
-## Example
+## Basic example
 
 In `routes/web.php`:
 
 ```php
-Route::get('login', [\App\Http\Controllers\Auth\SteamAuthController::class, 'login']);
+Route::get('login', \App\Http\Controllers\Auth\SteamAuthController::class);
 ```
 
 Create a controller `SteamAuthController.php`:
@@ -81,80 +101,63 @@ Create a controller `SteamAuthController.php`:
 ```php
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use App\User;
-use Illuminate\Support\Facades\Auth;
-use Ilzrv\LaravelSteamAuth\SteamAuth;
-use Ilzrv\LaravelSteamAuth\SteamData;
+use App\Models\User;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
+use GuzzleHttp\Psr7\Uri;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
+use Ilzrv\LaravelSteamAuth\Exceptions\Validation\ValidationException;
+use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
+use Ilzrv\LaravelSteamAuth\SteamUserDto;
 
-class SteamAuthController extends Controller
+final class SteamAuthController
 {
-    /**
-     * The SteamAuth instance.
-     *
-     * @var SteamAuth
-     */
-    protected $steamAuth;
+    public function __invoke(
+        Request $request,
+        Redirector $redirector,
+        Client $client,
+        HttpFactory $httpFactory,
+        AuthManager $authManager,
+    ): RedirectResponse {
+        $steamAuthenticator = new SteamAuthenticator(
+            new Uri($request->getUri()),
+            $client,
+            $httpFactory,
+        );
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = RouteServiceProvider::HOME;
-
-    /**
-     * SteamAuthController constructor.
-     *
-     * @param SteamAuth $steamAuth
-     */
-    public function __construct(SteamAuth $steamAuth)
-    {
-        $this->steamAuth = $steamAuth;
-    }
-
-    /**
-     * Get user data and login
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function login()
-    {
-        if (!$this->steamAuth->validate()) {
-            return $this->steamAuth->redirect();
+        try {
+            $steamAuthenticator->auth();
+        } catch (ValidationException) {
+            return $redirector->to(
+                $steamAuthenticator->buildAuthUrl()
+            );
         }
 
-        $data = $this->steamAuth->getUserData();
+        $steamUser = $steamAuthenticator->getSteamUser();
 
-        if (is_null($data)) {
-            return $this->steamAuth->redirect();
-        }
-
-        Auth::login(
-            $this->firstOrCreate($data),
+        $authManager->login(
+            $this->firstOrCreate($steamUser),
             true
         );
 
-        return redirect($this->redirectTo);
+        return $redirector->to('/');
     }
 
-    /**
-     * Get the first user by SteamID or create new
-     *
-     * @param SteamData $data
-     * @return User|\Illuminate\Database\Eloquent\Model
-     */
-    protected function firstOrCreate(SteamData $data)
+    private function firstOrCreate(SteamUserDto $steamUser): User
     {
         return User::firstOrCreate([
-            'steam_id' => $data->getSteamId(),
+            'steam_id' => $steamUser->getSteamId(),
         ], [
-            'name' => $data->getPersonaName(),
-            'avatar' => $data->getAvatarFull(),
-            'player_level' => $data->getPlayerLevel(),
+            'name' => $steamUser->getPersonaName(),
+            'avatar' => $steamUser->getAvatarFull(),
+            'player_level' => $steamUser->getPlayerLevel(),
             // ...and other what you need
         ]);
     }
