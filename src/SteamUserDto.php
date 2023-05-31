@@ -37,7 +37,7 @@ final class SteamUserDto
             commentPermission: $data['commentpermission'] ?? null,
             profileUrl: $data['profileurl'] ?? null,
             avatar: $data['avatar'] ?? null,
-            avatarMedium: $data['avatarmedium ?? null'],
+            avatarMedium: $data['avatarmedium'] ?? null,
             avatarFull: $data['avatarfull'] ?? null,
             avatarHash: $data['avatarhash'] ?? null,
             lastLogoff: $data['lastlogoff'] ?? null,
