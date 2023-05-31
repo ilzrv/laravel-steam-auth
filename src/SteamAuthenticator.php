@@ -51,7 +51,9 @@ final class SteamAuthenticator
         $contents = $response->getBody()->getContents();
 
         if (preg_match("#is_valid\s*:\s*true#i", $contents) !== 1) {
-            throw new SteamResponseNotValidAuthenticationException();
+            throw new SteamResponseNotValidAuthenticationException(
+                sprintf('Steam response contains invalid content: "%s"', $contents)
+            );
         }
 
         $query = $this->parseUriQueryString();
