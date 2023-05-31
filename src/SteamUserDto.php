@@ -17,7 +17,7 @@ final class SteamUserDto
         private readonly string $avatarMedium,
         private readonly string $avatarFull,
         private readonly string $avatarHash,
-        private readonly int $lastLogoff,
+        private readonly ?int $lastLogoff,
         private readonly int $personaState,
         private readonly string $primaryClanId,
         private readonly int $timeCreated,
@@ -40,7 +40,7 @@ final class SteamUserDto
             avatarMedium: $data['avatarmedium'],
             avatarFull: $data['avatarfull'],
             avatarHash: $data['avatarhash'],
-            lastLogoff: $data['lastlogoff'],
+            lastLogoff: $data['lastlogoff'] ?? null,
             personaState: $data['personastate'],
             primaryClanId: $data['primaryclanid'],
             timeCreated: $data['timecreated'],
@@ -100,7 +100,7 @@ final class SteamUserDto
         return $this->avatarHash;
     }
 
-    public function getLastLogoff(): int
+    public function getLastLogoff(): ?int
     {
         return $this->lastLogoff;
     }
