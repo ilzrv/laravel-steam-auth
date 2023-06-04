@@ -1,7 +1,8 @@
 # Steam Auth for Laravel
 [![Latest Stable Version](https://img.shields.io/packagist/v/ilzrv/laravel-steam-auth.svg)](https://packagist.org/packages/ilzrv/laravel-steam-auth)
-[![Codecov](https://img.shields.io/codecov/c/github/ilzrv/laravel-steam-auth?token=MIEA87EZGP)](https://app.codecov.io/github/ilzrv/laravel-steam-auth)
 [![Total Downloads](https://img.shields.io/packagist/dt/ilzrv/laravel-steam-auth.svg)](https://packagist.org/packages/ilzrv/laravel-steam-auth)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ilzrv/laravel-steam-auth/tests.yml)](https://github.com/ilzrv/laravel-steam-auth/actions/workflows/tests.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/ilzrv/laravel-steam-auth?token=MIEA87EZGP)](https://app.codecov.io/github/ilzrv/laravel-steam-auth)
 [![License](https://img.shields.io/github/license/ilzrv/laravel-steam-auth.svg)](https://packagist.org/packages/ilzrv/laravel-steam-auth)
 
 Package allows you to implement Steam authentication in your Laravel project.
@@ -113,6 +114,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\SteamResponseNotValidAuthenticationException;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\ValidationException;
 use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
 use Ilzrv\LaravelSteamAuth\SteamUserDto;
@@ -134,7 +136,7 @@ final class SteamAuthController
 
         try {
             $steamAuthenticator->auth();
-        } catch (ValidationException) {
+        } catch (ValidationException|SteamResponseNotValidAuthenticationException) {
             return $redirector->to(
                 $steamAuthenticator->buildAuthUrl()
             );
