@@ -24,6 +24,7 @@ final class SteamAuthenticator
     private const STEAM_LEVEL_URL = 'https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=%s&format=json&steamid=%s';
 
     private ?SteamUserDto $steamUserDto = null;
+		private string $apiKey = null;
 
     public function __construct(
         private readonly UriInterface $requestUri,
@@ -77,8 +78,10 @@ final class SteamAuthenticator
      */
     private function loadSteamUser(string $steamId): void
     {
+				$apiKey = $this->apiKey ?: $this->getApiKey();
+
         $steamDataResponse = $this->httpClient->sendRequest(
-            $this->requestFactory->createRequest('GET', sprintf(self::STEAM_DATA_URL, $this->getApiKey(), $steamId)),
+            $this->requestFactory->createRequest('GET', sprintf(self::STEAM_DATA_URL, $apiKey, $steamId)),
         );
 
         $steamData = json_decode(
@@ -92,7 +95,7 @@ final class SteamAuthenticator
             $userLevelResponse = $this->httpClient->sendRequest(
                 $this->requestFactory->createRequest(
                     'GET',
-                    sprintf(self::STEAM_LEVEL_URL, $this->getApiKey(), $steamId)
+                    sprintf(self::STEAM_LEVEL_URL, $apiKey, $steamId)
                 )
             );
 
@@ -111,6 +114,17 @@ final class SteamAuthenticator
 
         return $apiKeys[array_rand($apiKeys)];
     }
+
+		/**
+		 * Set a custom Api key if is needed.
+		 * 
+		 * @param string $apiKey
+		 * @return void
+		 */
+		public function setCustomApiKey(string $apiKey): void
+		{
+				$this->apiKey = $apiKey;
+		}
 
     private function buildOpenIdRequestQuery(): string
     {
