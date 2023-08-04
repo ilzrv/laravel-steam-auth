@@ -24,7 +24,7 @@ final class SteamAuthenticator
     private const STEAM_LEVEL_URL = 'https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=%s&format=json&steamid=%s';
 
     private ?SteamUserDto $steamUserDto = null;
-		private string $apiKey = null;
+		private ?string $apiKey = null;
 
     public function __construct(
         private readonly UriInterface $requestUri,
