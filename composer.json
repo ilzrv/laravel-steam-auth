@@ -12,7 +12,7 @@
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^10.0|^11.0|^12.0",
         "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0|^11.0",
-        "vimeo/psalm": "^5.12"
+        "vimeo/psalm": "^6.0"
     },
     "license": "MIT",
     "authors": [
