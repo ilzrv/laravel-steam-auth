@@ -25,13 +25,13 @@ final class SteamResponsesTest extends TestCase
             TEXT
         );
 
-        $client = $this->createMock(ClientInterface::class);
+        $client = $this->createStub(ClientInterface::class);
         $client->method('sendRequest')->willReturn($response);
 
         $steamAuthenticator = new SteamAuthenticator(
             $this->createUriMock('example.test'),
             $client,
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $this->expectException(SteamResponseNotValidAuthenticationException::class);
@@ -48,13 +48,13 @@ final class SteamResponsesTest extends TestCase
             TEXT
         );
 
-        $client = $this->createMock(ClientInterface::class);
+        $client = $this->createStub(ClientInterface::class);
         $client->method('sendRequest')->willReturn($response);
 
         $steamAuthenticator = new SteamAuthenticator(
             $this->createUriMock('example.test'),
             $client,
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $this->expectException(SteamIdNotFoundAuthenticationException::class);
@@ -79,13 +79,13 @@ final class SteamResponsesTest extends TestCase
             TEXT
         );
 
-        $client = $this->createMock(ClientInterface::class);
+        $client = $this->createStub(ClientInterface::class);
         $client->method('sendRequest')->willReturnOnConsecutiveCalls($response1, $response2);
 
         $steamAuthenticator = new SteamAuthenticator(
             $this->createUriMockWithOpenidClaimedId('76561198019153518'),
             $client,
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $steamAuthenticator->auth();
@@ -116,13 +116,13 @@ final class SteamResponsesTest extends TestCase
             TEXT
         );
 
-        $client = $this->createMock(ClientInterface::class);
+        $client = $this->createStub(ClientInterface::class);
         $client->method('sendRequest')->willReturnOnConsecutiveCalls($response1, $response2, $response3);
 
         $steamAuthenticator = new SteamAuthenticator(
             $this->createUriMockWithOpenidClaimedId('76561198019153518'),
             $client,
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $steamAuthenticator->auth();
@@ -133,10 +133,10 @@ final class SteamResponsesTest extends TestCase
 
     private function createResponseMock(string $contents): ResponseInterface
     {
-        $body = $this->createMock(StreamInterface::class);
+        $body = $this->createStub(StreamInterface::class);
         $body->method('getContents')->willReturn($contents);
 
-        $response = $this->createMock(ResponseInterface::class);
+        $response = $this->createStub(ResponseInterface::class);
         $response->method('getBody')->willReturn($body);
 
         return $response;
@@ -144,7 +144,7 @@ final class SteamResponsesTest extends TestCase
 
     private function createUriMockWithOpenidClaimedId(string $steamId): UriInterface
     {
-        $uri = $this->createMock(UriInterface::class);
+        $uri = $this->createStub(UriInterface::class);
 
         $httpQuery = self::buildHttpQuery(null, [
             'openid_return_to' => 'https://example.test/login',

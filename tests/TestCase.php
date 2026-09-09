@@ -25,7 +25,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     protected static function buildHttpQuery(
-        string $without = null,
+        ?string $without = null,
         array $replace = [],
     ): string {
         $params = [
@@ -49,7 +49,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     protected function createUriMock(
         string $authority,
     ): UriInterface {
-        $uri = $this->createMock(UriInterface::class);
+        $uri = $this->createStub(UriInterface::class);
 
         $uri->method('getScheme')->willReturn('https');
         $uri->method('getAuthority')->willReturn($authority);
@@ -61,4 +61,3 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         return $uri;
     }
 }
-

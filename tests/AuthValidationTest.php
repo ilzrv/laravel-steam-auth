@@ -9,6 +9,7 @@ use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidQueryValidationException
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidReturnToValidationException;
 use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
 use JsonException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
@@ -17,16 +18,7 @@ use Psr\Http\Message\UriInterface;
 
 final class AuthValidationTest extends TestCase
 {
-    /**
-     * @dataProvider provideRequiredParams
-     *
-     * @throws Exception
-     * @throws InvalidQueryValidationException
-     * @throws InvalidReturnToValidationException
-     * @throws AuthenticationException
-     * @throws \JsonException
-     * @throws ClientExceptionInterface
-     */
+    #[DataProvider('provideRequiredParams')]
     public function testAuthValidation(string $param, string $query): void
     {
         $uri = $this->createMock(UriInterface::class);
@@ -34,8 +26,8 @@ final class AuthValidationTest extends TestCase
 
         $steamAuth = new SteamAuthenticator(
             $uri,
-            $this->createMock(ClientInterface::class),
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(ClientInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $this->expectException(InvalidQueryValidationException::class);
@@ -69,8 +61,8 @@ final class AuthValidationTest extends TestCase
 
         $steamAuth = new SteamAuthenticator(
             $uri,
-            $this->createMock(ClientInterface::class),
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(ClientInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $this->expectException(InvalidReturnToValidationException::class);
