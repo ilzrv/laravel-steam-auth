@@ -9,6 +9,7 @@ use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\SteamIdNotFoundAuthenticati
 use Ilzrv\LaravelSteamAuth\Exceptions\Authentication\SteamResponseNotValidAuthenticationException;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidQueryValidationException;
 use Ilzrv\LaravelSteamAuth\Exceptions\Validation\InvalidReturnToValidationException;
+use InvalidArgumentException;
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
@@ -182,12 +183,18 @@ final class SteamAuthenticator
     public function buildAuthUrl(): string
     {
         $redirectUrl = $this->buildRedirectUrl();
+        $scheme = parse_url($redirectUrl, PHP_URL_SCHEME);
+        $host = parse_url($redirectUrl, PHP_URL_HOST);
+
+        if (!is_string($scheme) || !is_string($host)) {
+            throw new InvalidArgumentException('The redirect URL must contain a valid scheme and host.');
+        }
 
         $params = [
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $redirectUrl,
-            'openid.realm' => parse_url($redirectUrl, PHP_URL_SCHEME) . '://' . parse_url($redirectUrl, PHP_URL_HOST),
+            'openid.realm' => $scheme . '://' . $host,
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         ];
@@ -199,8 +206,8 @@ final class SteamAuthenticator
     {
         $redirectUrl = config('steam-auth.redirect_url');
 
-        if (is_string($redirectUrl) && is_string($buildRedirectUrl = url($redirectUrl))) {
-            return $buildRedirectUrl;
+        if (is_string($redirectUrl)) {
+            return url($redirectUrl);
         }
 
         return $this->requestUri->getScheme()

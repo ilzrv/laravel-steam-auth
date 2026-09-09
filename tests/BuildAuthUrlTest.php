@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ilzrv\LaravelSteamAuth\Tests;
 
 use Ilzrv\LaravelSteamAuth\SteamAuthenticator;
+use InvalidArgumentException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
@@ -44,5 +45,21 @@ final class BuildAuthUrlTest extends TestCase
             $uri,
             $steamAuthenticator->buildAuthUrl()
         );
+    }
+
+    public function testAuthUrlWithoutValidRealm(): void
+    {
+        $this->app['config']->set('steam-auth.redirect_url', null);
+
+        $steamAuthenticator = new SteamAuthenticator(
+            $this->createUriMock(''),
+            $this->createMock(ClientInterface::class),
+            $this->createMock(RequestFactoryInterface::class),
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The redirect URL must contain a valid scheme and host.');
+
+        $steamAuthenticator->buildAuthUrl();
     }
 }
