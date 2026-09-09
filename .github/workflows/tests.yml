@@ -24,7 +24,7 @@ jobs:
       - name: Install Dependencies
         run: |
           php -v
-          composer install --prefer-dist --no-interaction
+          composer update --prefer-dist --no-interaction --with "illuminate/support:${{ matrix.laravel }}"
 
       - name: Execute Tests
         run: XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml

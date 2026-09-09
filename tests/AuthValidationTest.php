@@ -26,8 +26,8 @@ final class AuthValidationTest extends TestCase
 
         $steamAuth = new SteamAuthenticator(
             $uri,
-            $this->createMock(ClientInterface::class),
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(ClientInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $this->expectException(InvalidQueryValidationException::class);
@@ -61,8 +61,8 @@ final class AuthValidationTest extends TestCase
 
         $steamAuth = new SteamAuthenticator(
             $uri,
-            $this->createMock(ClientInterface::class),
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(ClientInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $this->expectException(InvalidReturnToValidationException::class);

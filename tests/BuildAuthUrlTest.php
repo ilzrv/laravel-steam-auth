@@ -17,8 +17,8 @@ final class BuildAuthUrlTest extends TestCase
 
         $steamAuthenticator = new SteamAuthenticator(
             $this->createUriMock('example.test'),
-            $this->createMock(ClientInterface::class),
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(ClientInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $uri = 'https://steamcommunity.com/openid/login?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=https%3A%2F%2Fexample.test%2Flogin&openid.realm=https%3A%2F%2Fexample.test&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select';
@@ -35,8 +35,8 @@ final class BuildAuthUrlTest extends TestCase
 
         $steamAuthenticator = new SteamAuthenticator(
             $this->createUriMock('unused-example.test'),
-            $this->createMock(ClientInterface::class),
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(ClientInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $uri = 'https://steamcommunity.com/openid/login?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=https%3A%2F%2Fused-example.test%2Flogin&openid.realm=https%3A%2F%2Fused-example.test&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select';
@@ -53,8 +53,8 @@ final class BuildAuthUrlTest extends TestCase
 
         $steamAuthenticator = new SteamAuthenticator(
             $this->createUriMock(''),
-            $this->createMock(ClientInterface::class),
-            $this->createMock(RequestFactoryInterface::class),
+            $this->createStub(ClientInterface::class),
+            $this->createStub(RequestFactoryInterface::class),
         );
 
         $this->expectException(InvalidArgumentException::class);
