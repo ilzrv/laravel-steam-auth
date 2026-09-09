@@ -25,7 +25,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     protected static function buildHttpQuery(
-        string $without = null,
+        ?string $without = null,
         array $replace = [],
     ): string {
         $params = [
